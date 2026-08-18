@@ -1,0 +1,15 @@
+.DS_Store
+xcuserdata/
+**/xcuserdata/
+DerivedData/
+.build/
+*.xcuserstate
+.swiftpm/
+*.moved-aside
+*.hmap
+*.ipa
+timeline.xctimeline
+playground.xcworkspace
+---
+*.swp
+*~

@@ -1,0 +1,108 @@
+name: ParquetViewer
+options:
+  bundleIdPrefix: dev.boris
+  deploymentTarget:
+    macOS: "15.0"
+  xcodeVersion: "16.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+packages:
+  DuckDB:
+    url: https://github.com/duckdb/duckdb-swift
+    from: "1.1.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
+    DEVELOPMENT_TEAM: ""
+
+targets:
+  ParquetViewer:
+    type: application
+    platform: macOS
+    sources:
+      - path: ParquetViewer
+        excludes:
+          - Resources/Info.plist
+          - Resources/ParquetViewer.entitlements
+    info:
+      path: ParquetViewer/Resources/Info.plist
+      properties:
+        CFBundleName: Parquet Viewer
+        CFBundleDisplayName: Parquet Viewer
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        LSMinimumSystemVersion: "15.0"
+        LSApplicationCategoryType: public.app-category.developer-tools
+        NSHighResolutionCapable: true
+        NSQuitAlwaysKeepsWindows: false
+        NSSupportsAutomaticTermination: false
+        NSSupportsSuddenTermination: false
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: Apache Parquet
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Owner
+            LSItemContentTypes:
+              - org.apache.parquet
+            CFBundleTypeExtensions:
+              - parquet
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: org.apache.parquet
+            UTTypeDescription: Apache Parquet
+            UTTypeConformsTo:
+              - public.data
+              - public.content
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - parquet
+              public.mime-type:
+                - application/vnd.apache.parquet
+                - application/x-parquet
+    entitlements:
+      path: ParquetViewer/Resources/ParquetViewer.entitlements
+    settings:
+      base:
+        PRODUCT_NAME: Parquet Viewer
+        PRODUCT_MODULE_NAME: ParquetViewer
+        PRODUCT_BUNDLE_IDENTIFIER: dev.boris.ParquetViewer
+        GENERATE_INFOPLIST_FILE: false
+        INFOPLIST_FILE: ParquetViewer/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: ParquetViewer/Resources/ParquetViewer.entitlements
+        CODE_SIGN_STYLE: Automatic
+        COMBINE_HIDPI_IMAGES: YES
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        ENABLE_HARDENED_RUNTIME: YES
+        ENABLE_TESTABILITY: YES
+        SWIFT_STRICT_CONCURRENCY: complete
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
+    dependencies:
+      - package: DuckDB
+        product: DuckDB
+    scheme:
+      testTargets:
+        - ParquetViewerTests
+
+  ParquetViewerTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: ParquetViewerTests
+    resources:
+      - path: Fixtures
+        buildPhase: resources
+        type: folder
+    dependencies:
+      - target: ParquetViewer
+      - package: DuckDB
+        product: DuckDB
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.boris.ParquetViewerTests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_STRICT_CONCURRENCY: complete
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Parquet Viewer.app/Contents/MacOS/Parquet Viewer"
+        BUNDLE_LOADER: "$(TEST_HOST)"
