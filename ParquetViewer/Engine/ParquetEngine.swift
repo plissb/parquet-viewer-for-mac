@@ -19,6 +19,9 @@ actor ParquetEngine {
         self.quotedPath = SQLQuotes.path(url)
 
         do {
+            try connection.execute(
+                "CREATE OR REPLACE VIEW data AS SELECT * FROM read_parquet(\(SQLQuotes.path(url)))"
+            )
             describedColumns = try describeColumns()
             cachedRowCount = try loadRowCount()
         } catch {
@@ -164,15 +167,17 @@ actor ParquetEngine {
         return stats
     }
 
-    func page(offset: Int, limit: Int) async throws -> DataPage {
-        let (connection, path, _) = try requireOpen()
-        let columns = describedColumns.isEmpty ? try describeColumns() : describedColumns
+    func page(offset: Int, limit: Int, source: ResultSource = .table(whereClause: nil)) async throws -> DataPage {
+        let (connection, _, _) = try requireOpen()
+        let from = try fromClause(source)
+        let columns = try describeSource(from)
         let safeOffset = max(0, offset)
         let safeLimit = min(max(1, limit), 500)
+        let total = try countSource(from)
 
         let selectList: String
         if columns.isEmpty {
-            selectList = "1"
+            selectList = "*"
         } else {
             selectList = columns.map { column in
                 let ident = SQLQuotes.identifier(column.name)
@@ -187,12 +192,13 @@ actor ParquetEngine {
             connection,
             """
             SELECT \(selectList)
-            FROM read_parquet(\(path))
+            FROM \(from)
             LIMIT \(safeLimit) OFFSET \(safeOffset)
             """
         )
 
         let names = columns.map(\.name)
+        let types = columns.map(\.type)
         let typed = names.indices.map { result[DBInt($0)].cast(to: String.self) }
         let rowCount = Int(clamping: result.rowCount)
         var rows: [[String?]] = []
@@ -204,10 +210,11 @@ actor ParquetEngine {
 
         return DataPage(
             columns: names,
+            columnTypes: types,
             rows: rows,
             offset: safeOffset,
             limit: safeLimit,
-            totalRows: cachedRowCount
+            totalRows: total
         )
     }
 
@@ -228,14 +235,42 @@ actor ParquetEngine {
     }
 
     private func describeColumns() throws -> [(name: String, type: String)] {
-        let (connection, path, _) = try requireOpen()
-        let result = try query(connection, "DESCRIBE SELECT * FROM read_parquet(\(path))")
+        try describeSource("data")
+    }
+
+    private func fromClause(_ source: ResultSource) throws -> String {
+        switch source {
+        case .table(let whereClause):
+            return "data\(SQLQuotes.whereClause(whereClause))"
+        case .sql(let sql):
+            let cleaned = SQLQuotes.stripTrailingSemicolons(sql)
+            guard !cleaned.isEmpty else {
+                throw ParquetEngineError.queryFailed("Query is empty.")
+            }
+            let head = cleaned.prefix(while: { !$0.isWhitespace }).uppercased()
+            let allowed = ["SELECT", "WITH", "FROM", "DESCRIBE", "SHOW", "SUMMARIZE", "PIVOT"]
+            guard allowed.contains(head) else {
+                throw ParquetEngineError.queryFailed("Only queries that return rows are supported.")
+            }
+            return "(\(cleaned)) AS query_result"
+        }
+    }
+
+    private func describeSource(_ from: String) throws -> [(name: String, type: String)] {
+        let (connection, _, _) = try requireOpen()
+        let result = try query(connection, "DESCRIBE SELECT * FROM \(from)")
         let names = strings(result, named: "column_name")
         let types = strings(result, named: "column_type")
         return zip(names, types).compactMap { name, type in
             guard let name, let type else { return nil }
             return (name, type)
         }
+    }
+
+    private func countSource(_ from: String) throws -> Int64 {
+        let (connection, _, _) = try requireOpen()
+        let counted = try query(connection, "SELECT count(*) AS n FROM \(from)")
+        return int64(counted, "n", row: 0) ?? 0
     }
 
     private func loadRowCount() throws -> Int64 {

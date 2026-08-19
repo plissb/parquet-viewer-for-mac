@@ -3,6 +3,8 @@ xcuserdata/
 **/xcuserdata/
 DerivedData/
 .build/
+build/
+dist/
 *.xcuserstate
 .swiftpm/
 *.moved-aside

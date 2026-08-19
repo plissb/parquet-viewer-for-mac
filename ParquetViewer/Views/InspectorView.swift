@@ -6,6 +6,8 @@ struct InspectorView: View {
     @State private var appeared = false
     @AppStorage("showsColumnRail") private var showsColumnRail = true
     @AppStorage("showsSpecPlate") private var showsSpecPlate = true
+    @AppStorage("showsFilterBar") private var showsFilterBar = false
+    @AppStorage("showsQueryEditor") private var showsQueryEditor = false
 
     init(url: URL) {
         self.url = url
@@ -92,10 +94,26 @@ struct InspectorView: View {
                 }
 
                 VStack(spacing: 0) {
+                    if showsQueryEditor {
+                        QueryEditor(session: session) {
+                            withAnimation(.easeOut(duration: 0.16)) {
+                                showsQueryEditor = false
+                            }
+                        }
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    if showsFilterBar {
+                        FilterBar(session: session) {
+                            withAnimation(.easeOut(duration: 0.16)) {
+                                showsFilterBar = false
+                            }
+                        }
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                    }
                     if let page = session.page {
                         DataGridView(
                             page: page,
-                            columns: session.columns,
+                            columns: session.displayColumns,
                             selectedColumnID: session.selectedColumnID,
                             selectedRowIndexes: session.selectedRowIndexes,
                             focusedRowIndex: session.focusedRowIndex,
@@ -171,6 +189,26 @@ struct InspectorView: View {
                 .help(showsSpecPlate ? "Hide file details" : "Show file details")
                 .accessibilityLabel(showsSpecPlate ? "Hide file details" : "Show file details")
 
+                Button {
+                    withAnimation(.easeOut(duration: 0.16)) {
+                        showsFilterBar.toggle()
+                    }
+                } label: {
+                    Image(systemName: "line.3.horizontal.decrease.circle")
+                }
+                .help(showsFilterBar ? "Hide filter" : "Show filter")
+                .accessibilityLabel(showsFilterBar ? "Hide filter" : "Show filter")
+
+                Button {
+                    withAnimation(.easeOut(duration: 0.16)) {
+                        showsQueryEditor.toggle()
+                    }
+                } label: {
+                    Image(systemName: "chevron.left.forwardslash.chevron.right")
+                }
+                .help(showsQueryEditor ? "Hide query" : "Show query")
+                .accessibilityLabel(showsQueryEditor ? "Hide query" : "Show query")
+
                 Button("Copy Cell") {
                     session.copyCell()
                 }
@@ -182,6 +220,7 @@ struct InspectorView: View {
                     session.copySelection()
                 }
                 .keyboardShortcut("c", modifiers: .command)
+                .disabled(TextEditing.isActive)
                 .help("Copy the selected rows, or the page, as TSV")
             }
         }

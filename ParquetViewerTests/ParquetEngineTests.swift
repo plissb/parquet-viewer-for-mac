@@ -86,6 +86,54 @@ final class ParquetEngineTests: XCTestCase {
         await engine.close()
     }
 
+    func testFilterWhereClause() async throws {
+        let engine = ParquetEngine()
+        try await engine.open(url: fixture("flat.parquet"))
+        let page = try await engine.page(offset: 0, limit: 50, source: .table(whereClause: "id >= 490"))
+        XCTAssertEqual(page.totalRows, 10)
+        XCTAssertEqual(page.rows.count, 10)
+        XCTAssertEqual(page.rows.first?[0], "490")
+        await engine.close()
+    }
+
+    func testSQLQueryProjection() async throws {
+        let engine = ParquetEngine()
+        try await engine.open(url: fixture("flat.parquet"))
+        let page = try await engine.page(
+            offset: 0,
+            limit: 10,
+            source: .sql("SELECT id, name FROM data WHERE id < 3")
+        )
+        XCTAssertEqual(page.columns, ["id", "name"])
+        XCTAssertEqual(page.totalRows, 3)
+        XCTAssertEqual(page.rows.count, 3)
+        XCTAssertEqual(page.rows[1][1], "user_1")
+        await engine.close()
+    }
+
+    func testSQLAggregation() async throws {
+        let engine = ParquetEngine()
+        try await engine.open(url: fixture("flat.parquet"))
+        let page = try await engine.page(offset: 0, limit: 5, source: .sql("SELECT count(*) AS n FROM data"))
+        XCTAssertEqual(page.columns, ["n"])
+        XCTAssertEqual(page.rows.first?[0], "500")
+        await engine.close()
+    }
+
+    func testInvalidFilterFails() async throws {
+        let engine = ParquetEngine()
+        try await engine.open(url: fixture("flat.parquet"))
+        do {
+            _ = try await engine.page(offset: 0, limit: 10, source: .table(whereClause: "not_a_column = 1"))
+            XCTFail("expected failure")
+        } catch let error as ParquetEngineError {
+            guard case .queryFailed = error else {
+                return XCTFail("wrong error \(error)")
+            }
+        }
+        await engine.close()
+    }
+
     func testNotParquetFails() async throws {
         let junk = FileManager.default.temporaryDirectory.appendingPathComponent("not.parquet")
         try Data("hello".utf8).write(to: junk)

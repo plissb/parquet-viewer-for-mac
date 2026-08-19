@@ -96,8 +96,14 @@ struct ColumnStats: Sendable, Equatable {
     var compression: String?
 }
 
+enum ResultSource: Sendable, Equatable {
+    case table(whereClause: String?)
+    case sql(String)
+}
+
 struct DataPage: Sendable, Equatable {
     var columns: [String]
+    var columnTypes: [String] = []
     var rows: [[String?]]
     var offset: Int
     var limit: Int

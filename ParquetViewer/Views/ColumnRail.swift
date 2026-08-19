@@ -38,8 +38,12 @@ struct ColumnRail: View {
                     HStack(spacing: 8) {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(column.name)
-                                .font(Typeface.mono(12, weight: .medium))
-                                .foregroundStyle(Palette.ink)
+                                .font(Typeface.mono(12, weight: session.selectedColumnID == column.id ? .bold : .regular))
+                                .foregroundStyle(
+                                    session.selectedColumnID == column.id
+                                        ? Palette.chip(.text)
+                                        : Palette.ink
+                                )
                                 .lineLimit(1)
                             Text(column.duckType)
                                 .font(Typeface.mono(10))

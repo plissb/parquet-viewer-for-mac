@@ -17,4 +17,12 @@ final class SQLQuotesTests: XCTestCase {
         let url = URL(fileURLWithPath: "/tmp/O'Brien.parquet")
         XCTAssertEqual(SQLQuotes.path(url), "'/tmp/O''Brien.parquet'")
     }
+
+    func testWhereClauseAndSQLCleanup() {
+        XCTAssertEqual(SQLQuotes.whereClause(nil), "")
+        XCTAssertEqual(SQLQuotes.whereClause("  "), "")
+        XCTAssertEqual(SQLQuotes.whereClause("id > 1"), " WHERE id > 1")
+        XCTAssertEqual(SQLQuotes.whereClause("WHERE id > 1"), " WHERE id > 1")
+        XCTAssertEqual(SQLQuotes.stripTrailingSemicolons("SELECT 1; \n;"), "SELECT 1")
+    }
 }

@@ -39,23 +39,71 @@ enum Typeface {
     }
 }
 
-extension Color {
-    init(hex: String) {
+private enum HexRGB {
+    static func components(_ hex: String) -> (CGFloat, CGFloat, CGFloat) {
         let cleaned = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var value: UInt64 = 0
         Scanner(string: cleaned).scanHexInt64(&value)
-        let r = Double((value >> 16) & 0xFF) / 255
-        let g = Double((value >> 8) & 0xFF) / 255
-        let b = Double(value & 0xFF) / 255
-        self.init(red: r, green: g, blue: b)
+        return (
+            CGFloat((value >> 16) & 0xFF) / 255,
+            CGFloat((value >> 8) & 0xFF) / 255,
+            CGFloat(value & 0xFF) / 255
+        )
+    }
+}
+
+extension Color {
+    init(hex: String) {
+        let (r, g, b) = HexRGB.components(hex)
+        self.init(red: Double(r), green: Double(g), blue: Double(b))
     }
 
     init(light: String, dark: String) {
-        self.init(nsColor: NSColor(name: nil) { appearance in
+        self.init(nsColor: NSColor(name: "swift-palette-\(light)-\(dark)") { appearance in
             let isDark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
             return NSColor(Color(hex: isDark ? dark : light))
         })
     }
+}
+
+extension NSColor {
+    static func srgb(hex: String) -> NSColor {
+        let (r, g, b) = HexRGB.components(hex)
+        return NSColor(srgbRed: r, green: g, blue: b, alpha: 1)
+    }
+
+    static func adaptive(light: String, dark: String) -> NSColor {
+        NSColor(name: "ns-palette-\(light)-\(dark)") { appearance in
+            let isDark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+            return .srgb(hex: isDark ? dark : light)
+        }
+    }
+}
+
+extension Palette {
+    static let nsInk = NSColor.adaptive(light: "2A2118", dark: "F3E6D4")
+    static let nsMuted = nsInk.withAlphaComponent(0.62)
+    static let nsBrass = NSColor.adaptive(light: "8A6A32", dark: "C4A574")
+
+    static func nsChip(_ kind: TypeKind) -> NSColor {
+        switch kind {
+        case .integer: integerChip
+        case .floating: floatingChip
+        case .text: textChip
+        case .boolean: booleanChip
+        case .temporal: temporalChip
+        case .nested: nestedChip
+        case .binary, .other: binaryChip
+        }
+    }
+
+    private static let integerChip = NSColor.adaptive(light: "5C6B75", dark: "8FA0AB")
+    private static let floatingChip = NSColor.adaptive(light: "2F6F6A", dark: "7FB3AD")
+    private static let textChip = NSColor.adaptive(light: "9A6B24", dark: "D4A85A")
+    private static let booleanChip = NSColor.adaptive(light: "5B6A32", dark: "A3B56A")
+    private static let temporalChip = NSColor.adaptive(light: "8A4A32", dark: "C48468")
+    private static let nestedChip = NSColor.adaptive(light: "5C4E73", dark: "A696C0")
+    private static let binaryChip = NSColor.adaptive(light: "6B6258", dark: "A3988C")
 }
 
 enum Pasteboard {

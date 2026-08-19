@@ -18,12 +18,17 @@
 		67423E516286C567F541DBA8 /* SpecPlate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDC235D6CE34F095DFE26E5 /* SpecPlate.swift */; };
 		78EF594DBA4E6DE799AB3303 /* EmptyDropView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C293195E3CEFCF258A93FD0 /* EmptyDropView.swift */; };
 		7ACCC2B637F2F69510355816 /* ParquetViewerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F4EFD87D797A404672B950 /* ParquetViewerApp.swift */; };
+		7C30FCFB9839F7F9D1777E6A /* HighlightedSQLEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7839A2D935647F0B9E8A2E /* HighlightedSQLEditor.swift */; };
 		7DEAD5CC9BB27306548423EB /* SQLQuotesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0BDF85BE625CE011BC9018 /* SQLQuotesTests.swift */; };
+		9641BC93B6AE1CEA8F1EBA74 /* SQLHighlighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E07BDB45BD337608C89B9A /* SQLHighlighter.swift */; };
 		A09A9BFDFC3AD55F3FB1C71C /* Workspace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1754078436EB2ECAD665E1 /* Workspace.swift */; };
+		A2613963E7A98629D158A61C /* QueryEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA0B1BDEDE5EEE1F683C201 /* QueryEditor.swift */; };
+		A3C9BA5AB41C3F9F9954576C /* SQLHighlighterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54F5C85A305E1F3C9EA71601 /* SQLHighlighterTests.swift */; };
 		BA00DE99C9C4716676DA7CB2 /* TypeChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC257A3C49397D84B72AFDD2 /* TypeChip.swift */; };
 		C5E259C72500BB7226BA13B6 /* PaginationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43C90C2CECE53FC403CAEC6B /* PaginationBar.swift */; };
 		CB6C60EF50F757BE9D4E8C70 /* DuckDB in Frameworks */ = {isa = PBXBuildFile; productRef = 7338F56A3E89EE7DBC33D9A6 /* DuckDB */; };
 		D366F9E94BDF90C8BF0E7D28 /* ParquetEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0BEEB4D111C288E3A91FCB /* ParquetEngineTests.swift */; };
+		D47AB6C11168F550A14975E0 /* FilterBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 427CA002DE64132A818190CF /* FilterBar.swift */; };
 		D533E11757651C7D6FC52557 /* DataGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B78F85D405101B390CD025F0 /* DataGridView.swift */; };
 		DE842400B335C9EC1B2523F3 /* ParquetModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = D760A259CBA76F704CA42A49 /* ParquetModels.swift */; };
 		E5DAC6D34988169A778319E4 /* ColumnRail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4934C77E1E96F9E6F3474995 /* ColumnRail.swift */; };
@@ -48,11 +53,15 @@
 		0C293195E3CEFCF258A93FD0 /* EmptyDropView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyDropView.swift; sourceTree = "<group>"; };
 		1165F4DA5158B978DDC9535C /* ParquetViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ParquetViewerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		233BA44BEC2A838077548FB9 /* ParquetViewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ParquetViewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2BA0B1BDEDE5EEE1F683C201 /* QueryEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryEditor.swift; sourceTree = "<group>"; };
 		3B1754078436EB2ECAD665E1 /* Workspace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Workspace.swift; sourceTree = "<group>"; };
 		3C0BEEB4D111C288E3A91FCB /* ParquetEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParquetEngineTests.swift; sourceTree = "<group>"; };
+		427CA002DE64132A818190CF /* FilterBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterBar.swift; sourceTree = "<group>"; };
 		43C90C2CECE53FC403CAEC6B /* PaginationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginationBar.swift; sourceTree = "<group>"; };
 		4934C77E1E96F9E6F3474995 /* ColumnRail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColumnRail.swift; sourceTree = "<group>"; };
+		54F5C85A305E1F3C9EA71601 /* SQLHighlighterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLHighlighterTests.swift; sourceTree = "<group>"; };
 		5B0BDF85BE625CE011BC9018 /* SQLQuotesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLQuotesTests.swift; sourceTree = "<group>"; };
+		72E07BDB45BD337608C89B9A /* SQLHighlighter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLHighlighter.swift; sourceTree = "<group>"; };
 		76F05731AAB29A518D028188 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		86835AB05A72B6F355D79100 /* SQLQuotes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SQLQuotes.swift; sourceTree = "<group>"; };
 		9FA8934854F9329203290E0E /* CellFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellFormatter.swift; sourceTree = "<group>"; };
@@ -60,6 +69,7 @@
 		ADDC235D6CE34F095DFE26E5 /* SpecPlate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecPlate.swift; sourceTree = "<group>"; };
 		B78F85D405101B390CD025F0 /* DataGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataGridView.swift; sourceTree = "<group>"; };
 		B800BE93A4AA6B2A6101C10E /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		BF7839A2D935647F0B9E8A2E /* HighlightedSQLEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightedSQLEditor.swift; sourceTree = "<group>"; };
 		CB5CBE23DBFEFBAB94B95BB4 /* ParquetSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParquetSession.swift; sourceTree = "<group>"; };
 		CFF4D4DB0A7A0342F0D89ED7 /* ParquetEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParquetEngine.swift; sourceTree = "<group>"; };
 		D760A259CBA76F704CA42A49 /* ParquetModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParquetModels.swift; sourceTree = "<group>"; };
@@ -96,6 +106,7 @@
 				9FA8934854F9329203290E0E /* CellFormatter.swift */,
 				CFF4D4DB0A7A0342F0D89ED7 /* ParquetEngine.swift */,
 				D760A259CBA76F704CA42A49 /* ParquetModels.swift */,
+				72E07BDB45BD337608C89B9A /* SQLHighlighter.swift */,
 				86835AB05A72B6F355D79100 /* SQLQuotes.swift */,
 			);
 			path = Engine;
@@ -141,9 +152,12 @@
 				4934C77E1E96F9E6F3474995 /* ColumnRail.swift */,
 				B78F85D405101B390CD025F0 /* DataGridView.swift */,
 				0C293195E3CEFCF258A93FD0 /* EmptyDropView.swift */,
+				427CA002DE64132A818190CF /* FilterBar.swift */,
+				BF7839A2D935647F0B9E8A2E /* HighlightedSQLEditor.swift */,
 				AABEEC73A7AA0966EFEE2E9F /* InspectorView.swift */,
 				43C90C2CECE53FC403CAEC6B /* PaginationBar.swift */,
 				D7689489055948032B33213A /* PanelCloseButton.swift */,
+				2BA0B1BDEDE5EEE1F683C201 /* QueryEditor.swift */,
 				76F05731AAB29A518D028188 /* RootView.swift */,
 				ADDC235D6CE34F095DFE26E5 /* SpecPlate.swift */,
 				FC257A3C49397D84B72AFDD2 /* TypeChip.swift */,
@@ -178,6 +192,7 @@
 			children = (
 				E05C3603773EEC21BE8059A6 /* CellFormatterTests.swift */,
 				3C0BEEB4D111C288E3A91FCB /* ParquetEngineTests.swift */,
+				54F5C85A305E1F3C9EA71601 /* SQLHighlighterTests.swift */,
 				5B0BDF85BE625CE011BC9018 /* SQLQuotesTests.swift */,
 			);
 			path = ParquetViewerTests;
@@ -294,6 +309,7 @@
 			files = (
 				24D053A448D85E5A44411377 /* CellFormatterTests.swift in Sources */,
 				D366F9E94BDF90C8BF0E7D28 /* ParquetEngineTests.swift in Sources */,
+				A3C9BA5AB41C3F9F9954576C /* SQLHighlighterTests.swift in Sources */,
 				7DEAD5CC9BB27306548423EB /* SQLQuotesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -307,6 +323,8 @@
 				E5DAC6D34988169A778319E4 /* ColumnRail.swift in Sources */,
 				D533E11757651C7D6FC52557 /* DataGridView.swift in Sources */,
 				78EF594DBA4E6DE799AB3303 /* EmptyDropView.swift in Sources */,
+				D47AB6C11168F550A14975E0 /* FilterBar.swift in Sources */,
+				7C30FCFB9839F7F9D1777E6A /* HighlightedSQLEditor.swift in Sources */,
 				F6E7525E48E9444E4CA9B47E /* InspectorView.swift in Sources */,
 				C5E259C72500BB7226BA13B6 /* PaginationBar.swift in Sources */,
 				F55DDF176F85FAFE6B40548B /* PanelCloseButton.swift in Sources */,
@@ -314,7 +332,9 @@
 				DE842400B335C9EC1B2523F3 /* ParquetModels.swift in Sources */,
 				0A1D9840045078B91E5F3FE1 /* ParquetSession.swift in Sources */,
 				7ACCC2B637F2F69510355816 /* ParquetViewerApp.swift in Sources */,
+				A2613963E7A98629D158A61C /* QueryEditor.swift in Sources */,
 				424AF81B23075D59CE6D52B1 /* RootView.swift in Sources */,
+				9641BC93B6AE1CEA8F1EBA74 /* SQLHighlighter.swift in Sources */,
 				54EC8EC5818816DB2F1659E2 /* SQLQuotes.swift in Sources */,
 				67423E516286C567F541DBA8 /* SpecPlate.swift in Sources */,
 				BA00DE99C9C4716676DA7CB2 /* TypeChip.swift in Sources */,

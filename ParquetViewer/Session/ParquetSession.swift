@@ -25,6 +25,12 @@ final class ParquetSession {
     var selectedRowIndexes = IndexSet()
     var focusedRowIndex: Int?
     var focusedColumnID: String?
+    var filterDraft = ""
+    var appliedFilter: String?
+    var filterError: String?
+    var queryDraft = "SELECT *\nFROM data\n"
+    var appliedQuery: String?
+    var queryError: String?
     var revealTick = 0
 
     init(url: URL) {
@@ -38,7 +44,28 @@ final class ParquetSession {
     }
 
     var selectedColumn: ColumnNode? {
-        columns.first { $0.id == selectedColumnID }
+        displayColumns.first { $0.id == selectedColumnID } ?? columns.first { $0.id == selectedColumnID }
+    }
+
+    var isQueryActive: Bool { appliedQuery != nil }
+    var isFilterActive: Bool { appliedFilter != nil }
+
+    var currentSource: ResultSource {
+        if let appliedQuery {
+            return .sql(appliedQuery)
+        }
+        return .table(whereClause: appliedFilter)
+    }
+
+    var displayColumns: [ColumnNode] {
+        guard let page else { return columns }
+        return page.columns.enumerated().map { index, name in
+            if let existing = columns.first(where: { $0.name == name }) {
+                return existing
+            }
+            let type = page.columnTypes.indices.contains(index) ? page.columnTypes[index] : "VARCHAR"
+            return ColumnNode(id: name, name: name, duckType: type)
+        }
     }
 
     var selectedStats: ColumnStats? {
@@ -85,16 +112,61 @@ final class ParquetSession {
     }
 
     func goToPage(offset: Int) async {
-        let bounded = max(0, offset)
         do {
-            page = try await engine.page(offset: bounded, limit: pageSize)
-            pageOffset = bounded
-            selectedRowIndexes = []
-            focusedRowIndex = nil
-            focusedColumnID = nil
+            try await reloadPage(offset: offset)
         } catch {
-            phase = .failed(error.localizedDescription)
+            if isQueryActive {
+                queryError = error.localizedDescription
+            } else {
+                filterError = error.localizedDescription
+            }
         }
+    }
+
+    func applyFilter() async {
+        let text = filterDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        appliedQuery = nil
+        queryError = nil
+        appliedFilter = text.isEmpty ? nil : text
+        do {
+            try await reloadPage(offset: 0)
+            filterError = nil
+        } catch {
+            appliedFilter = nil
+            filterError = error.localizedDescription
+        }
+    }
+
+    func clearFilter() async {
+        filterDraft = ""
+        appliedFilter = nil
+        filterError = nil
+        await goToPage(offset: 0)
+    }
+
+    func runQuery() async {
+        let text = SQLQuotes.stripTrailingSemicolons(queryDraft)
+        guard !text.isEmpty else {
+            queryError = "Query is empty."
+            return
+        }
+        appliedFilter = nil
+        filterError = nil
+        appliedQuery = text
+        do {
+            try await reloadPage(offset: 0)
+            queryError = nil
+        } catch {
+            appliedQuery = nil
+            queryError = error.localizedDescription
+        }
+    }
+
+    func clearQuery() async {
+        queryDraft = "SELECT *\nFROM data\n"
+        appliedQuery = nil
+        queryError = nil
+        await goToPage(offset: 0)
     }
 
     func changePageSize(_ size: Int) async {
@@ -154,5 +226,14 @@ final class ParquetSession {
 
     func close() async {
         await engine.close()
+    }
+
+    private func reloadPage(offset: Int) async throws {
+        let bounded = max(0, offset)
+        page = try await engine.page(offset: bounded, limit: pageSize, source: currentSource)
+        pageOffset = bounded
+        selectedRowIndexes = []
+        focusedRowIndex = nil
+        focusedColumnID = nil
     }
 }

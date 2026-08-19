@@ -19,6 +19,18 @@ struct PaginationBar: View {
                 .foregroundStyle(Palette.ink)
                 .monospacedDigit()
 
+            if session.isQueryActive {
+                Text("QUERY")
+                    .font(Typeface.mono(9, weight: .medium))
+                    .tracking(0.6)
+                    .foregroundStyle(Palette.brass)
+            } else if session.isFilterActive {
+                Text("FILTER")
+                    .font(Typeface.mono(9, weight: .medium))
+                    .tracking(0.6)
+                    .foregroundStyle(Palette.brass)
+            }
+
             if session.selectedRowIndexes.count > 0 {
                 Text(selectionLabel)
                     .font(Typeface.mono(11))

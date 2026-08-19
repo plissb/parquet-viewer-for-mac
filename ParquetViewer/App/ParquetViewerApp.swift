@@ -7,6 +7,8 @@ struct ParquetViewerApp: App {
     @State private var workspace = Workspace.shared
     @AppStorage("showsColumnRail") private var showsColumnRail = true
     @AppStorage("showsSpecPlate") private var showsSpecPlate = true
+    @AppStorage("showsFilterBar") private var showsFilterBar = false
+    @AppStorage("showsQueryEditor") private var showsQueryEditor = false
 
     var body: some Scene {
         Window("Parquet Viewer", id: "main") {
@@ -31,6 +33,32 @@ struct ParquetViewerApp: App {
                 .disabled(workspace.currentURL == nil)
             }
             CommandGroup(replacing: .pasteboard) {
+                Button("Cut") {
+                    NSApp.sendAction(#selector(NSText.cut(_:)), to: nil, from: nil)
+                }
+                .keyboardShortcut("x", modifiers: .command)
+
+                Button("Copy") {
+                    if TextEditing.isActive {
+                        NSApp.sendAction(#selector(NSText.copy(_:)), to: nil, from: nil)
+                    } else {
+                        NotificationCenter.default.post(name: .copyRowsRequested, object: nil)
+                    }
+                }
+                .keyboardShortcut("c", modifiers: .command)
+
+                Button("Paste") {
+                    NSApp.sendAction(#selector(NSText.paste(_:)), to: nil, from: nil)
+                }
+                .keyboardShortcut("v", modifiers: .command)
+
+                Button("Select All") {
+                    NSApp.sendAction(#selector(NSText.selectAll(_:)), to: nil, from: nil)
+                }
+                .keyboardShortcut("a", modifiers: .command)
+
+                Divider()
+
                 Button("Copy Cell") {
                     NotificationCenter.default.post(name: .copyCellRequested, object: nil)
                 }
@@ -39,7 +67,6 @@ struct ParquetViewerApp: App {
                 Button("Copy Rows") {
                     NotificationCenter.default.post(name: .copyRowsRequested, object: nil)
                 }
-                .keyboardShortcut("c", modifiers: .command)
             }
             CommandMenu("View") {
                 Button(showsColumnRail ? "Hide Columns" : "Show Columns") {
@@ -51,6 +78,18 @@ struct ParquetViewerApp: App {
                     showsSpecPlate.toggle()
                 }
                 .keyboardShortcut("2", modifiers: [.command, .option])
+
+                Divider()
+
+                Button(showsFilterBar ? "Hide Filter" : "Show Filter") {
+                    showsFilterBar.toggle()
+                }
+                .keyboardShortcut("f", modifiers: [.command, .option])
+
+                Button(showsQueryEditor ? "Hide Query" : "Show Query") {
+                    showsQueryEditor.toggle()
+                }
+                .keyboardShortcut("e", modifiers: [.command, .option])
             }
         }
     }
@@ -76,5 +115,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSWindow.allowsAutomaticWindowTabbing = false
         UserDefaults.standard.set(false, forKey: "NSQuitAlwaysKeepsWindows")
+    }
+}
+
+enum TextEditing {
+    static var isActive: Bool {
+        var responder = NSApp.keyWindow?.firstResponder
+        while let current = responder {
+            if current is NSTextView || current is NSTextField {
+                return true
+            }
+            responder = current.nextResponder
+        }
+        return false
     }
 }
