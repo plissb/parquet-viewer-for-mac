@@ -1,0 +1,11 @@
+---
+description: Feature-branch workflow — never commit directly to develop
+alwaysApply: true
+---
+
+# Git workflow
+
+- Base branch is `develop`. Do not commit or push directly to `develop` or `main`.
+- For every task: create a branch from latest `develop`, make all changes there, then open a PR into `develop` and merge it.
+- Branch names: `feat/...`, `fix/...`, or `chore/...` from a short task slug.
+- Do not change the GitHub default branch unless the user explicitly asks.
